@@ -15,4 +15,6 @@ The similar result is archived by changing display property of h1 tag from block
 ![](img/test3.png)
 The app is initialized with vite for fast development speed, Deploy to firebase in which can be viewed [here](https://ioio-test3.web.app/).
 
-4.
+4. three.js
+The rgb effect is archived with ShaderPass.
+Example can be viewed [here](https://ioio-test4.web.app).

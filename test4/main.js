@@ -2,9 +2,14 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import breath from "./breath.png";
 
-// import galaxyVertexShader from "./shaders/galaxy/vertex.glsl?raw";
-// import galaxyFragmentShader from "./shaders/galaxy/fragment.glsl?raw";
+import fragmentShader from "./shaders/fragmentShader.glsl?raw";
+import vertexShader from "./shaders/vertexShader.glsl?raw";
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
 // import gsap from "gsap";
+
 const canvas = document.querySelector("canvas");
 const scene = new THREE.Scene();
 const width = window.innerWidth;
@@ -31,46 +36,42 @@ camera.position.y = 2;
 // control
 const controls = new OrbitControls(camera, renderer.domElement);
 
-//cube
-// const geometry = new THREE.BoxGeometry(2, 2, 2);
-// const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-// const cube = new THREE.Mesh(geometry, material);
-// scene.add(cube);
-
 // plane
 // Create a texture loader so we can load our image file
-var loader = new THREE.TextureLoader();
+const loader = new THREE.TextureLoader();
+const imageTexture = new THREE.TextureLoader().load("./breath.png");
 
-// Animate
-const tick = () => {
-  // const elapsedTime = clock.getElapsedTime();
-
-  // console.log("log", cameraPositions);
-
-  camera.lookAt(new THREE.Vector3(0, 0, 0));
-  controls.update();
-
-  // Render
-  renderer.render(scene, camera);
-
-  // Call tick again on the next frame
-  window.requestAnimationFrame(tick);
-};
+// let material = new THREE.ShaderMaterial({
+//   vertexShader: vertexShader,
+//   fragmentShader: fragmentShader,
+//   // transparent: true,
+//   // wireframe: true,
+//   side: THREE.DoubleSide,
+//   uniforms: {
+//     uTexture: {
+//       //texture data
+//       value: imageTexture,
+//     },
+//     uOffset: {
+//       //distortion strength
+//       value: new THREE.Vector2(0.1, 0.2),
+//     },
+//     uAlpha: {
+//       //opacity
+//       value: 1.0,
+//     },
+//   },
+// });
 
 // Load an image file into a custom material
-var material = new THREE.MeshLambertMaterial({
-  map: loader.load(
-    "./breath.png",
-    () => tick()
-  ),
+let material = new THREE.MeshLambertMaterial({
+  map: loader.load("./breath.png", () => tick()),
 });
 
-// create a plane geometry for the image with a width of 10
-// and a height that preserves the image's aspect ratio
-var geometry = new THREE.PlaneGeometry(10, 10);
+const geometry = new THREE.PlaneGeometry(10, 10);
 
 // combine our image geometry and material into a mesh
-var mesh = new THREE.Mesh(geometry, material);
+const mesh = new THREE.Mesh(geometry, material);
 
 // set the position of the image mesh in the x,y,z dimensions
 mesh.position.set(0, 0, 0);
@@ -78,23 +79,47 @@ mesh.position.set(0, 0, 0);
 // add the image to the scene
 scene.add(mesh);
 
-// Event: on screen resizes
-window.addEventListener("resize", () => {
-  renderer.setSize(width, height);
-});
+//Lights
 
-/**
- * Lights
- **/
-
-// Add a point light with #fff color, .7 intensity, and 0 distance
-var light = new THREE.PointLight(0xffffff, 1, 0);
+const light = new THREE.PointLight(0xffffff, 1, 0);
 
 // Specify the light's position
 light.position.set(1, 1, 100);
 
 // Add the light to the scene
 scene.add(light);
+
+// postprocessing
+
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+
+const effect2 = new ShaderPass(RGBShiftShader);
+effect2.uniforms["amount"].value = 0.03;
+composer.addPass(effect2);
+
+// Event: on screen resizes
+window.addEventListener("resize", () => {
+  renderer.setSize(width, height);
+  composer.setSize(width, height);
+});
+
+// Animate
+const tick = () => {
+  // const elapsedTime = clock.getElapsedTime();
+
+  // console.log("log", cameraPositions);
+  window.requestAnimationFrame(tick);
+
+  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  controls.update();
+
+  // Render
+  // renderer.render(scene, camera);
+  composer.render();
+
+  // Call tick again on the next frame
+};
 
 // const clock = new THREE.Clock();
 
