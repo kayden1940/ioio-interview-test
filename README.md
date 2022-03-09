@@ -17,4 +17,5 @@ The app is initialized with vite for fast development speed, Deploy to firebase 
 
 4. three.js
 The rgb effect is achived with ShaderPass.
+![](img/test4.png)
 Example can be viewed [here](https://ioio-test4.web.app).
