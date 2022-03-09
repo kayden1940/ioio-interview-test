@@ -11,10 +11,10 @@ The app is initialized with creat-react-app, using packages swr for fetching api
 [example](https://ioio-test2.web.app/) is hosted on firebase for fast demonstration.
 
 3. css\
-The similar result is archived by changing display property of h1 tag from block to inline.
+The similar result is achived by changing display property of h1 tag from block to inline.
 ![](img/test3.png)
 The app is initialized with vite for fast development speed, Deploy to firebase in which can be viewed [here](https://ioio-test3.web.app/).
 
 4. three.js
-The rgb effect is archived with ShaderPass.
+The rgb effect is achived with ShaderPass.
 Example can be viewed [here](https://ioio-test4.web.app).

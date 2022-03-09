@@ -65,7 +65,7 @@ const imageTexture = new THREE.TextureLoader().load("./breath.png");
 
 // Load an image file into a custom material
 let material = new THREE.MeshLambertMaterial({
-  map: loader.load("./breath.png", () => tick()),
+  map: loader.load(breath, () => tick()),
 });
 
 const geometry = new THREE.PlaneGeometry(10, 10);
